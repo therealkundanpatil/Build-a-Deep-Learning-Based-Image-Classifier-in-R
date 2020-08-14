@@ -45,6 +45,8 @@ head(train_labels)
 head(test_labels)
 
 
+
+
 #Data Preprocessing(Normalization)
 train_images <- train_images / 255
 test_images <- test_images / 255
@@ -73,3 +75,34 @@ for (i in 1:25){
   img <- t(apply(img, 2, rev))
   image( 1:28, 1:28, img, col = gray((0:255) / 255), xaxt = "n", yaxt = "n", main = paste(class_names[train_labels[i]+1]))
 }
+
+
+
+
+#Building model
+model <- keras_model_sequential()
+model %>% 
+  layer_flatten(input_shape = c(28, 28)) %>%
+  layer_dense(unit = 128, activation = "relu") %>%
+  layer_dense(unit = 10, activation = "softmax")
+summary(model)
+
+
+
+
+#compile the model
+model %>% compile(optimizer = "adam",
+                  loss = "sparse_categorical_crossentropy",
+                  metrics = c("accuracy"))
+
+
+
+
+#Training and evaluating the model
+model %>% fit( train_images, train_labels, epochs = 10, validation_split = 0.2)
+score <- model %>% evaluate( test_images, test_labels)
+cat("Test Loss: ", score["loss"], "\n")
+cat("Test Accuracy: ", score["accuracy"],"\n")
+
+
+
