@@ -73,7 +73,14 @@ par(mar = c( 0, 0, 1.5, 0), xaxs = "i", yaxs = "i")
 for (i in 1:25){
   img <- train_images[i, ,]
   img <- t(apply(img, 2, rev))
-  image( 1:28, 1:28, img, col = gray((0:255) / 255), xaxt = "n", yaxt = "n", main = paste(class_names[train_labels[i]+1]))
+  image( 1:28, 
+         1:28, 
+         img, 
+         col = gray((0:255) / 255), 
+         xaxt = "n", 
+         yaxt = "n", 
+         main = paste(class_names[ train_labels[i] + 1 ])
+        )
 }
 
 
@@ -106,3 +113,36 @@ cat("Test Accuracy: ", score["accuracy"],"\n")
 
 
 
+
+#Prediction using model
+predictions <- model %>% predict(test_images)
+which.max(predictions[1,])
+
+#Plot with predicted images
+par(mfcol = c(5, 5))
+par(mar = c(0, 0, 1.5, 0), xaxs = "i", yaxs = "i")
+for (i in 1:25){
+  img <- test_images[i, ,]
+  img <- t(apply(img, 2, rev))
+  
+  predicted_labels <- which.max(predictions[i,]) -1
+  true_labels <- test_labels[i]
+  if(predicted_labels == true_labels){
+    color = "#008800"
+  }
+  else{
+    color = "#bb0000"
+  }
+  
+  image(
+    1:28 ,
+    1:28 ,
+    img ,
+    col = gray((0:255) / 255),
+    xaxt = "n",
+    yaxt = "n",
+    main = paste0(class_names[predicted_labels + 1], "(",
+                  class_names[true_labels + 1], ")"),
+    col.main = color
+  )
+}
